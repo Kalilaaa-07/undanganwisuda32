@@ -77,7 +77,7 @@ export default function NotePage() {
           >
             <span className="text-[9px] text-yellow-400">✦</span>
             <span className="text-[9px] text-yellow-300/80">
-              LUMINEX · ANGKATAN 32
+              SHINE · ANGKATAN 32
             </span>
             <span className="text-[9px] text-yellow-400">✦</span>
           </div>
@@ -119,75 +119,9 @@ export default function NotePage() {
               fontSize: "clamp(14px,2vw,16px)",
             }}
           >
-            Informasi penting untuk seluruh tamu undangan wisuda SMK Telkom
+            Informasi penting untuk seluruh tamu undangan SHINE Angkatan XXXII SMK Telkom
             Malang
           </p>
-
-          <Divider />
-
-          {/* ============================================================
-              MANDATORY RULES — HIGH VISIBILITY
-          ============================================================ */}
-          <div className="w-full space-y-4">
-            <p
-              className="text-left text-[10px] tracking-[0.4em] text-yellow-300/60 uppercase"
-              style={{ fontFamily: "'Cinzel', serif" }}
-            >
-              Perhatian Khusus
-            </p>
-
-            {mandatoryRules.map((rule, i) => (
-              <div
-                key={i}
-                className="animate-fadein w-full overflow-hidden rounded-[22px] p-5"
-                style={{
-                  animationDelay: `${i * 0.1}s`,
-                  background: rule.bg,
-                  border: `2px solid ${rule.border}`,
-                  boxShadow: `0 0 24px ${rule.bg}, inset 0 1px 0 ${rule.border}`,
-                }}
-              >
-                <div className="flex items-start gap-4 text-left">
-                  {/* icon */}
-                  <div
-                    className="flex h-14 w-14 min-w-[56px] items-center justify-center rounded-2xl flex-shrink-0"
-                    style={{
-                      background: rule.iconBg,
-                      border: `1px solid ${rule.border}`,
-                    }}
-                  >
-                    <rule.icon size={24} style={{ color: rule.color }} />
-                  </div>
-
-                  {/* text */}
-                  <div>
-                    <p
-                      className="font-bold leading-snug"
-                      style={{
-                        color: rule.color,
-                        fontSize: "clamp(16px, 4vw, 18px)",
-                        fontFamily: "'Cinzel', serif",
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      {rule.title}
-                    </p>
-                    <p
-                      className="mt-1.5 leading-7"
-                      style={{
-                        color: "rgba(255,255,255,0.65)",
-                        fontSize: "clamp(14px, 3.5vw, 16px)",
-                        fontFamily: "'Cormorant Garamond', Georgia, serif",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      {rule.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
 
           <Divider />
 

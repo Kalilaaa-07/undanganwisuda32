@@ -116,7 +116,7 @@ export default function GalleryPage() {
             >
               <span className="text-[9px] text-yellow-400">✦</span>
               <span className="text-[9px] text-yellow-300/80">
-                LUMINEX · ANGKATAN 32
+                SHINE · ANGKATAN 32
               </span>
               <span className="text-[9px] text-yellow-400">✦</span>
             </div>

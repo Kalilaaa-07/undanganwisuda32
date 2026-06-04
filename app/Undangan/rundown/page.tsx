@@ -24,29 +24,44 @@ type RundownItem = {
 /* ============================================================ */
 const fallbackData: RundownItem[] = [
   {
-    waktu: "07.30 – 08.00",
+    waktu: "07.00 – 08.00",
     acara: "Registrasi Tamu",
-    desc: "Tamu undangan melakukan registrasi dan memasuki venue",
+    desc: "- Foto bersama Wali Kelas\n- Registrasi Orang Tua Wisudawan",
   },
   {
-    waktu: "08.00 – 08.15",
+    waktu: "08.00 – 08.38",
     acara: "Pembukaan",
-    desc: "Pembukaan oleh MC dan doa bersama",
+    desc: "Opening MC, pembacaan Qiroah, serta menyanyikan lagu Indonesia Raya & Mars Pendidikan.",
   },
   {
-    waktu: "08.15 – 09.30",
-    acara: "Prosesi Wisuda",
-    desc: "Pemanggilan dan penyerahan penghargaan kepada wisudawan",
-  },
-  {
-    waktu: "09.30 – 10.00",
+    waktu: "08.38 – 09.11",
     acara: "Sambutan",
-    desc: "Sambutan dari Kepala Sekolah dan perwakilan siswa",
+    desc: "Sambutan dari Kepala Sekolah, Ketua Yayasan Pendidikan Telkom, serta Cabang Dinas Pendidikan.",
   },
   {
-    waktu: "10.00 – 11.00",
-    acara: "Penutup & Foto Bersama",
-    desc: "Sesi foto bersama dan penutup acara",
+    waktu: "09.11 – 09.56",
+    acara: "Kuliah Umum",
+    desc: "Kuliah umum tentang Peluang dan Tantangan Karir di Era Digital oleh PT Telkom Indonesia.",
+  },
+  {
+    waktu: "09.56 – 10.06",
+    acara: "Apresiasi",
+    desc: "Pemberian penghargaan apresiasi kerja sama industri kepada mitra sekolah.",
+  },
+  {
+    waktu: "10.06 – 11.31",
+    acara: "Prosesi SHINE",
+    desc: "Pelepasan resmi wisudawan, pembacaan ikrar alumni, dan pengumuman prestasi akademik & non-akademik.",
+  },
+  {
+    waktu: "11.31 – 11.41",
+    acara: "Pidato Perwakilan Lulusan dan Ortu",
+    desc: "Pidato kesan pesan dari perwakilan wisudawan dan perwakilan orang tua wisudawan.",
+  },
+  {
+    waktu: "11.41 – 11.52",
+    acara: "Doa Dan Penutup",
+    desc: "Doa bersama, penutupan resmi rangkaian acara, dan penayangan Video Profil Angkatan 32.",
   },
 ];
 
@@ -163,7 +178,7 @@ export default function RundownPage() {
             >
               <span className="text-yellow-400 text-[9px]">✦</span>
               <span className="text-[9px] text-yellow-300/80">
-                LUMINEX · ANGKATAN 32
+                SHINE · ANGKATAN 32
               </span>
               <span className="text-yellow-400 text-[9px]">✦</span>
             </div>
@@ -205,7 +220,7 @@ export default function RundownPage() {
                 letterSpacing: "0.05em",
               }}
             >
-              Susunan kegiatan Wisuda LUMINEX
+              Susunan kegiatan SHINE – Angkatan 32
             </p>
 
             <GoldDivider />
@@ -253,16 +268,6 @@ export default function RundownPage() {
               <div className="flex justify-center pt-2">
                 <Loader2 size={20} className="animate-spin text-yellow-300/40" />
               </div>
-            </div>
-          )}
-
-          {/* FALLBACK NOTICE */}
-          {!loading && usingFallback && (
-            <div className="mb-4 flex items-center gap-2 rounded-2xl border border-yellow-400/15 bg-yellow-400/5 px-4 py-3">
-              <AlertCircle size={15} className="text-yellow-400/60 flex-shrink-0" />
-              <p className="text-[12px] text-yellow-300/50">
-                Menampilkan jadwal sementara
-              </p>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, Shirt, Sparkles, Share2 } from "lucide-react";
+import { MapPin, Shirt, Sparkles, Share2, Ban, Users } from "lucide-react";
 import BottomNav from "@/components/BottonNav";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -27,7 +27,7 @@ function formatEventTime(iso: string) {
       hour12: false
     }).format(new Date(iso)) + " WIB";
   } catch {
-    return "08.00 WIB";
+    return "07.00 WIB";
   }
 }
 
@@ -36,8 +36,8 @@ export default function AcaraPage() {
   const [mounted, setMounted] = useState(false);
 
   const [eventData, setEventData] = useState({
-    title: "Wisuda",
-    eventDate: "2026-06-11T08:00:00",
+    title: "SHINE",
+    eventDate: "2026-06-11T07:00:00",
     venue: "Graha Cakrawala",
     address: "UNIVERSITAS NEGERI MALANG",
     subAddress: "Jl. Semarang No.5\nSumbersari, Lowokwaru, Kota Malang,\nJawa Timur 65145",
@@ -58,8 +58,8 @@ export default function AcaraPage() {
         if (res?.data?.event) {
           const e = res.data.event;
           setEventData({
-            title: e.title || "Wisuda",
-            eventDate: e.eventDate || "2026-06-11T08:00:00",
+            title: e.title || "SHINE",
+            eventDate: e.eventDate || "2026-06-11T07:00:00",
             venue: e.venue || "Graha Cakrawala",
             address: e.venue === "Graha Cakrawala" ? "UNIVERSITAS NEGERI MALANG" : (e.description || "Lokasi Acara"),
             subAddress: e.venue === "Graha Cakrawala" 
@@ -144,7 +144,7 @@ export default function AcaraPage() {
               style={{ letterSpacing: "0.32em" }}
             >
               <span className="text-yellow-400 text-[9px]">✦</span>
-              <span className="text-[9px] text-yellow-300/80">LUMINEX · ANGKATAN 32</span>
+              <span className="text-[9px] text-yellow-300/80">SHINE · ANGKATAN 32</span>
               <span className="text-yellow-400 text-[9px]">✦</span>
             </div>
 
@@ -183,8 +183,8 @@ export default function AcaraPage() {
                 boxShadow: "inset 0 1px 0 rgba(255,215,0,0.1)",
               }}
             >
-              <div className="flex items-center justify-between gap-4">
-                <div>
+              <div className="flex items-start justify-between gap-1 sm:gap-2">
+                <div className="flex-1 min-w-0">
                   <p
                     className="text-[10px] text-yellow-400/55"
                     style={{ letterSpacing: "0.4em", fontFamily: "'Cinzel', serif" }}
@@ -193,16 +193,16 @@ export default function AcaraPage() {
                   </p>
                   <p
                     className="mt-1 text-white"
-                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(14px,3vw,18px)", letterSpacing: "0.06em" }}
+                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(12px,2.7vw,16px)", letterSpacing: "0.06em" }}
                   >
                     {formatEventDate(eventData.eventDate)}
                   </p>
                 </div>
                 <div
-                  className="h-10 w-px"
+                  className="self-center h-10 w-px flex-shrink-0"
                   style={{ background: "linear-gradient(to bottom, transparent, rgba(255,215,0,0.3), transparent)" }}
                 />
-                <div>
+                <div className="flex-1 min-w-0">
                   <p
                     className="text-[10px] text-yellow-400/55"
                     style={{ letterSpacing: "0.4em", fontFamily: "'Cinzel', serif" }}
@@ -211,16 +211,16 @@ export default function AcaraPage() {
                   </p>
                   <p
                     className="mt-1 text-white"
-                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(14px,3vw,18px)", letterSpacing: "0.06em" }}
+                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(15px,3.4vw,21px)", fontWeight: 700, letterSpacing: "0.06em" }}
                   >
                     {formatEventTime(eventData.eventDate)}
                   </p>
                 </div>
                 <div
-                  className="h-10 w-px"
+                  className="self-center h-10 w-px flex-shrink-0"
                   style={{ background: "linear-gradient(to bottom, transparent, rgba(255,215,0,0.3), transparent)" }}
                 />
-                <div>
+                <div className="flex-1 min-w-0">
                   <p
                     className="text-[10px] text-yellow-400/55"
                     style={{ letterSpacing: "0.4em", fontFamily: "'Cinzel', serif" }}
@@ -228,8 +228,8 @@ export default function AcaraPage() {
                     ACARA
                   </p>
                   <p
-                    className="mt-1 text-yellow-300"
-                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(12px,2.5vw,15px)", letterSpacing: "0.04em" }}
+                    className="mt-1 text-yellow-300 animate-pulse"
+                    style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(15px,3.4vw,21px)", fontWeight: 700, letterSpacing: "0.04em" }}
                   >
                     {eventData.title}
                   </p>
@@ -325,7 +325,109 @@ export default function AcaraPage() {
           </div>
 
           {/* ===== INFO CARDS ===== */}
-          <div className="mt-8 flex flex-col gap-5">
+          <div className="mt-8 flex flex-col gap-6">
+
+            {/* ===== PERHATIAN KHUSUS ===== */}
+            <div className="flex flex-col gap-4">
+              <p
+                className="text-left text-[10px] tracking-[0.4em] text-yellow-300/60 uppercase"
+                style={{ fontFamily: "'Cinzel', serif" }}
+              >
+                Perhatian Khusus
+              </p>
+
+              <div
+                className="animate-fadein w-full overflow-hidden rounded-[26px] p-6"
+                style={{
+                  animationDelay: "0.08s",
+                  background: "rgba(255,215,0,0.08)",
+                  border: "2px solid rgba(255,215,0,0.25)",
+                  boxShadow: "0 0 24px rgba(255,215,0,0.08), inset 0 1px 0 rgba(255,215,0,0.25)",
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                <div className="flex items-start gap-5">
+                  <div
+                    className="flex h-14 w-14 min-w-[56px] items-center justify-center rounded-2xl flex-shrink-0"
+                    style={{
+                      background: "rgba(255,215,0,0.12)",
+                      border: "1px solid rgba(255,215,0,0.25)",
+                    }}
+                  >
+                    <Users size={24} className="text-yellow-300" />
+                  </div>
+
+                  <div className="flex-1 text-left">
+                    <p
+                      className="font-bold leading-snug text-yellow-300"
+                      style={{
+                        fontSize: "clamp(16px, 4vw, 18px)",
+                        fontFamily: "'Cinzel', serif",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      Undangan berlaku 2 orang
+                    </p>
+                    <p
+                      className="mt-1.5 leading-7 text-white/75"
+                      style={{
+                        fontSize: "clamp(14px, 3.5vw, 16px)",
+                        fontFamily: "'Cormorant Garamond', Georgia, serif",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Bapak-Ibu / Saudara
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="animate-fadein w-full overflow-hidden rounded-[26px] p-6"
+                style={{
+                  animationDelay: "0.12s",
+                  background: "rgba(255,80,80,0.07)",
+                  border: "2px solid rgba(255,80,80,0.22)",
+                  boxShadow: "0 0 24px rgba(255,80,80,0.07), inset 0 1px 0 rgba(255,80,80,0.22)",
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                <div className="flex items-start gap-5">
+                  <div
+                    className="flex h-14 w-14 min-w-[56px] items-center justify-center rounded-2xl flex-shrink-0"
+                    style={{
+                      background: "rgba(255,80,80,0.12)",
+                      border: "1px solid rgba(255,80,80,0.22)",
+                    }}
+                  >
+                    <Ban size={24} className="text-[#ff8080]" />
+                  </div>
+
+                  <div className="flex-1 text-left">
+                    <p
+                      className="font-bold leading-snug text-[#ff8080]"
+                      style={{
+                        fontSize: "clamp(16px, 4vw, 18px)",
+                        fontFamily: "'Cinzel', serif",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      Dilarang membawa bouquet
+                    </p>
+                    <p
+                      className="mt-1.5 leading-7 text-white/75"
+                      style={{
+                        fontSize: "clamp(14px, 3.5vw, 16px)",
+                        fontFamily: "'Cormorant Garamond', Georgia, serif",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Karangan bunga tidak diperkenankan masuk ke dalam venue
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* ===== DRESSCODE ===== */}
             <div
@@ -528,7 +630,7 @@ export default function AcaraPage() {
                     PETUNJUK ARAH
                   </a>
                   <a
-                    href={`https://wa.me/?text=${encodeURIComponent(`Lokasi Wisuda Angkatan 32 SMK Telkom Malang:\n${eventData.venue}\n${eventData.directionUrl}`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`Lokasi SHINE Angkatan 32 SMK Telkom Malang:\n${eventData.venue}\n${eventData.directionUrl}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 rounded-2xl px-4 py-3.5 transition-all active:scale-[0.97]"

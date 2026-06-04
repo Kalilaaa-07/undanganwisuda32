@@ -164,7 +164,7 @@ const downloadQR = async () => {
   ctx.font = "28px sans-serif";
 
   ctx.fillText(
-    "LUMINEX • ANGKATAN 32",
+    "SHINE • ANGKATAN 32",
     600,
     200
   );
@@ -426,7 +426,7 @@ const downloadQR = async () => {
               </span>
 
               <span className="text-[9px] text-yellow-300/80">
-                LUMINEX · ANGKATAN 32
+                SHINE · ANGKATAN 32
               </span>
 
               <span className="text-yellow-400 text-[9px]">

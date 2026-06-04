@@ -300,7 +300,43 @@ function OpeningPageContent() {
   }, [searchParams]);
 
   /* ===== COMMENTS LOADER ===== */
-  const loadComments = () => {
+  const loadComments = async (eventId?: string) => {
+    if (eventId) {
+      try {
+        const res = await fetch(`${API}/api/public-messages/events/${eventId}`);
+        if (res.ok) {
+          const result = await res.json();
+          const msgList = Array.isArray(result) ? result : (result.data || []);
+          const mappedComments = msgList.map((m: any) => ({
+            id: m.id || Date.now(),
+            nama: m.sender || "Tamu",
+            pesan: m.message || "",
+            hadir: "Hadir",
+            waktu: new Intl.DateTimeFormat("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(new Date(m.createdAt || m.timestamps || Date.now())),
+          }));
+          setComments(mappedComments);
+          
+          // Still compute counts from localStorage
+          const raw = localStorage.getItem("rsvp-data");
+          if (raw) {
+            const data = JSON.parse(raw);
+            setAttending(data.filter((c: any) => c.hadir === "Hadir").length);
+            setNotAttending(data.filter((c: any) => c.hadir === "Tidak Hadir").length);
+          }
+          setCommentsLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.error("API comments load failed, falling back to local storage:", e);
+      }
+    }
+
     try {
       const raw = localStorage.getItem("rsvp-data");
       if (raw) {
@@ -318,8 +354,12 @@ function OpeningPageContent() {
   };
 
   useEffect(() => {
-    loadComments();
-  }, []);
+    if (event?.id) {
+      loadComments(event.id);
+    } else {
+      loadComments();
+    }
+  }, [event]);
 
   /* ===== SCROLL TO RSVP ANCHOR ===== */
   useEffect(() => {
@@ -359,6 +399,21 @@ function OpeningPageContent() {
         localStorage.setItem(`rsvp-edit-count-${hash}`, String(newCount));
       }
 
+      // Submit public message to API
+      if (pesan.trim()) {
+        try {
+          const formData = new FormData();
+          formData.append("message", pesan.trim());
+
+          await fetch(`${API}/api/public-messages/${hash}`, {
+            method: "POST",
+            body: formData,
+          });
+        } catch (e) {
+          console.error("Failed to submit message to API:", e);
+        }
+      }
+
       try {
         const commentEntry = {
           id: Date.now(),
@@ -378,7 +433,7 @@ function OpeningPageContent() {
         const filtered = existing.filter((c: any) => c.nama !== commentEntry.nama);
         filtered.push(commentEntry);
         localStorage.setItem("rsvp-data", JSON.stringify(filtered));
-        loadComments();
+        loadComments(event?.id);
       } catch (e) {
         // ignore
       }
@@ -437,7 +492,7 @@ function OpeningPageContent() {
     ctx.fillStyle = "#f5e9c0";
     ctx.textAlign = "center";
     ctx.font = "bold 52px serif";
-    ctx.fillText("LUMINEX 2026", W / 2, cY + 110);
+    ctx.fillText("SHINE 2026", W / 2, cY + 110);
 
     ctx.fillStyle = "rgba(245,233,192,0.55)";
     ctx.font = "18px sans-serif";
@@ -611,16 +666,6 @@ function OpeningPageContent() {
         {/* ===== CONTENT ===== */}
         <div className="relative z-10 flex min-h-screen flex-col items-center pb-36 pt-14 text-center">
 
-          {/* ===== MINI BADGE ===== */}
-          <div
-            className="inline-flex items-center gap-2 rounded-full border border-yellow-400/25 bg-yellow-400/5 px-5 py-2 backdrop-blur-xl"
-            style={{ letterSpacing: "0.3em" }}
-          >
-            <span className="text-yellow-400 text-[9px]">✦</span>
-            <span className="text-[10px] text-yellow-300/90 font-light tracking-widest">WISUDA 2026</span>
-            <span className="text-yellow-400 text-[9px]">✦</span>
-          </div>
-
           {/* ===== WELCOME ===== */}
           <p className="mt-10 text-[10px] tracking-[0.35em] text-blue-200/60 uppercase">
             Selamat Datang di
@@ -698,7 +743,7 @@ function OpeningPageContent() {
                 filter: "drop-shadow(0 0 30px rgba(255,215,0,0.25))",
               }}
             >
-              LUMINEX
+              SHINE
             </h1>
 
             <div
@@ -1208,7 +1253,7 @@ function OpeningPageContent() {
                                 letterSpacing: "0.06em",
                               }}
                             >
-                              LUMINEX 2026
+                              SHINE 2026
                             </p>
                             <p className="mt-0.5 text-center text-[11px] text-yellow-100/35" style={{ letterSpacing: "0.18em" }}>
                               SMK TELKOM MALANG · ANGKATAN 32
@@ -1483,7 +1528,7 @@ function OpeningPageContent() {
                       <Heart size={32} className="text-yellow-300/50" />
                     </div>
                   </div>
-                  <p style={{ fontFamily: "'Cinzel', serif", fontSize: 17, fontWeight: 700, letterSpacing: "0.06em" }}>
+                  <p style={{ fontFamily: "'Cinzel', serif", fontSize: 17, fontWeight: 700, letterSpacing: "0.06em", color: "#ffffff" }}>
                     Belum Ada Ucapan
                   </p>
                   <p

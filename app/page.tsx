@@ -3,8 +3,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
+import Stack from "@/components/Stack";
 
 export default function Home() {
+  const images = [
+    "/undangan-wisuda-32/rpl3-kelas.png",
+    "/undangan-wisuda-32/rpl6-kelas.png",
+    "/undangan-wisuda-32/kel1.JPG",
+    "/undangan-wisuda-32/kel2.JPG",
+    "/undangan-wisuda-32/angkatan.png",
+  ];
+
   return (
     <main className="relative overflow-hidden bg-[#071f3d] text-white">
 
@@ -28,24 +37,14 @@ export default function Home() {
         {/* ===== TOP LOGO ===== */}
         <div className="mb-8 flex flex-col items-center">
 
-{/* FRAME LOGO */}
-<div className="absolute left-1/2 top-0 z-30 -translate-x-1/2">
-
-  <div
-    className="rounded-[14px] px-2 py-1.5"
-    style={{
-      background: "#ffffff",
-      boxShadow: "0 4px 20px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.1)",
-    }}
-  >
-    <img
-      src="/undangan-wisuda-32/logo1.png"
-      alt="Logo"
-      className="h-auto w-[120px] object-contain sm:w-[150px] md:w-[190px]"
-    />
-  </div>
-
-</div>
+          {/* FRAME LOGO */}
+          <div className="absolute left-1/2 top-2 z-30 -translate-x-1/2 sm:top-4">
+            <img
+              src="/undangan-wisuda-32/logoTelkom2.png"
+              alt="Logo"
+              className="h-auto w-[200px] object-contain sm:w-[220px] md:w-[300px]"
+            />
+          </div>
 
           {/* LABEL */}
           <div className="mt-3 rounded-[14px] border border-yellow-300/20 bg-yellow-300/10 px-4 py-[7px] backdrop-blur-md">
@@ -62,23 +61,27 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
 
           {/* ===== FOTO ===== */}
-          <div className="flex justify-center">
+          <div className="flex justify-center w-full">
 
-            <div className="relative w-full max-w-[430px] overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-2 shadow-[0_0_30px_rgba(255,255,255,0.05)] backdrop-blur-xl">
-
-              <div className="relative overflow-hidden rounded-[20px]">
-
-                <img
-                  src="/undangan-wisuda-32/angkatan.png"
-                  alt="Angkatan"
-                  className="h-[300px] w-full object-cover sm:h-[380px] md:h-[500px]"
-                />
-
-                {/* OVERLAY */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f3d]/85 via-transparent to-transparent" />
-
-              </div>
-
+            <div className="relative w-full max-w-[480px] h-[340px] sm:h-[440px] md:h-[560px]">
+              <Stack
+                randomRotation={true}
+                sensitivity={140}
+                sendToBackOnClick={true}
+                cards={images.map((src, idx) => (
+                  <div key={idx} className="relative w-full h-full border border-white/10 bg-white/5 p-2 shadow-[0_0_30px_rgba(255,255,255,0.08)] backdrop-blur-xl rounded-[24px]">
+                    <div className="relative w-full h-full overflow-hidden rounded-[20px]">
+                      <img 
+                        src={src} 
+                        alt={`card-${idx + 1}`} 
+                        className="w-full h-full object-cover pointer-events-none select-none"
+                      />
+                      {/* OVERLAY */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#071f3d]/85 via-transparent to-transparent pointer-events-none" />
+                    </div>
+                  </div>
+                ))}
+              />
             </div>
 
           </div>
@@ -88,16 +91,23 @@ export default function Home() {
 
             {/* TITLE */}
             <h1
-              className="text-white"
+              className="relative px-4"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "clamp(52px, 12vw, 92px)",
                 fontWeight: 900,
+                letterSpacing: "0.14em",
                 lineHeight: 1,
-                textShadow: "0 0 20px rgba(255,255,255,0.08)",
+                color: "transparent",
+                backgroundImage:
+                  "linear-gradient(160deg, #ffffff 20%, #e8d68a 50%, #ffd700 65%, #ffffff 90%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                textShadow: "none",
+                filter: "drop-shadow(0 0 30px rgba(255,215,0,0.25))",
               }}
             >
-              Wisuda
+              SHINE
             </h1>
 
             {/* SUBTITLE */}
@@ -199,7 +209,7 @@ export default function Home() {
 
       {/* ===== STYLE ===== */}
       <style jsx>{`
-        @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap");
 
         @keyframes float {
           0%,

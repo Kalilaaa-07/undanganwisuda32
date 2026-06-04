@@ -59,7 +59,7 @@ export default function ThanksPage() {
           </span>
 
           <span className="text-[9px] text-yellow-300/80">
-            LUMINEX · ANGKATAN 32
+            SHINE · ANGKATAN 32
           </span>
 
           <span className="text-[9px] text-yellow-400">
@@ -172,7 +172,7 @@ export default function ThanksPage() {
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-white/10 px-5 py-2 backdrop-blur-md">
 
                   <p className="text-sm text-white/90">
-                    LUMINEX 2026
+                    SHINE 2026
                   </p>
 
                 </div>
@@ -227,9 +227,9 @@ export default function ThanksPage() {
                       "'Cormorant Garamond', Georgia, serif",
                   }}
                 >
-                  Wisuda Angkatan XXXII
+                  SHINE Angkatan XXXII
                   <br />
-                  LUMINEX 2026
+                  SHINE 2026
                   <br />
                   SMK Telkom Malang
                 </p>
@@ -317,7 +317,7 @@ export default function ThanksPage() {
 
         {/* ===== FOOTER ===== */}
         <p className="mt-10 text-xs tracking-[0.35em] text-yellow-300/60">
-          LUMINEX · SEE YOU SOON
+          SHINE · SEE YOU SOON
         </p>
 
       </div>

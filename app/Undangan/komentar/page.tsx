@@ -42,6 +42,11 @@ function getInitials(name: string) {
 }
 
 /* ============================================================ */
+/* API URL                                                      */
+/* ============================================================ */
+const API = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+/* ============================================================ */
 /* MAIN PAGE                                                    */
 /* ============================================================ */
 export default function KomentarPage() {
@@ -51,20 +56,69 @@ export default function KomentarPage() {
   const [notAttending, setNotAttending] = useState(0);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("rsvp-data");
-      if (raw) {
-        const data = JSON.parse(raw) as Comment[];
-        const sorted = [...data].reverse(); // newest first
-        setComments(sorted);
-        setAttending(data.filter((c) => c.hadir === "Hadir").length);
-        setNotAttending(data.filter((c) => c.hadir === "Tidak Hadir").length);
+    const loadData = async () => {
+      const hash = typeof window !== "undefined" ? sessionStorage.getItem("invitation-hash") : null;
+      if (hash) {
+        try {
+          const invRes = await fetch(`${API}/api/invitation/${hash}`);
+          if (invRes.ok) {
+            const invData = await invRes.json();
+            const eventId = invData?.data?.event?.id;
+            if (eventId) {
+              const msgRes = await fetch(`${API}/api/public-messages/events/${eventId}`);
+              if (msgRes.ok) {
+                const result = await msgRes.json();
+                const msgList = Array.isArray(result) ? result : (result.data || []);
+                const mapped = msgList.map((m: any) => ({
+                  id: m.id || Date.now(),
+                  nama: m.sender || "Tamu",
+                  pesan: m.message || "",
+                  hadir: "Hadir",
+                  waktu: new Intl.DateTimeFormat("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }).format(new Date(m.createdAt || m.timestamps || Date.now())),
+                }));
+                setComments(mapped);
+
+                // Still load counts from local storage
+                const raw = localStorage.getItem("rsvp-data");
+                if (raw) {
+                  const data = JSON.parse(raw) as Comment[];
+                  setAttending(data.filter((c) => c.hadir === "Hadir").length);
+                  setNotAttending(data.filter((c) => c.hadir === "Tidak Hadir").length);
+                }
+                setLoading(false);
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load comments from API, falling back to local storage:", e);
+        }
       }
-    } catch {
-      setComments([]);
-    } finally {
-      setLoading(false);
-    }
+
+      // Fallback
+      try {
+        const raw = localStorage.getItem("rsvp-data");
+        if (raw) {
+          const data = JSON.parse(raw) as Comment[];
+          const sorted = [...data].reverse();
+          setComments(sorted);
+          setAttending(data.filter((c) => c.hadir === "Hadir").length);
+          setNotAttending(data.filter((c) => c.hadir === "Tidak Hadir").length);
+        }
+      } catch {
+        setComments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
   return (
@@ -96,7 +150,7 @@ export default function KomentarPage() {
               style={{ letterSpacing: "0.32em" }}
             >
               <span className="text-[9px] text-yellow-400">✦</span>
-              <span className="text-[9px] text-yellow-300/80">LUMINEX · ANGKATAN 32</span>
+              <span className="text-[9px] text-yellow-300/80">SHINE · ANGKATAN 32</span>
               <span className="text-[9px] text-yellow-400">✦</span>
             </div>
 
