@@ -54,6 +54,8 @@ export default function KomentarPage() {
   const [loading, setLoading] = useState(true);
   const [attending, setAttending] = useState(0);
   const [notAttending, setNotAttending] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const COMMENTS_PER_PAGE = 10;
 
   useEffect(() => {
     const loadData = async () => {
@@ -187,37 +189,7 @@ export default function KomentarPage() {
 
           <GoldDivider />
 
-          {/* ── STATS ROW ── */}
-          {!loading && comments.length > 0 && (
-            <div className="mb-6 grid grid-cols-3 gap-3">
-              {[
-                { icon: MessageCircleHeart, label: "Ucapan", value: comments.length, color: "#ffd700" },
-                { icon: CalendarCheck, label: "Hadir", value: attending, color: "#4ade80" },
-                { icon: Users, label: "Tdk Hadir", value: notAttending, color: "#f87171" },
-              ].map((stat, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col items-center rounded-2xl py-4"
-                  style={{
-                    background: "linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    backdropFilter: "blur(16px)",
-                  }}
-                >
-                  <stat.icon size={20} style={{ color: stat.color, opacity: 0.8 }} />
-                  <span
-                    className="mt-2 font-black"
-                    style={{ fontFamily: "'Cinzel', serif", fontSize: 22, color: stat.color }}
-                  >
-                    {stat.value}
-                  </span>
-                  <span className="mt-0.5 text-white/35" style={{ fontSize: 10, letterSpacing: "0.1em" }}>
-                    {stat.label.toUpperCase()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+
 
           {/* ── LOADING ── */}
           {loading && (
@@ -272,7 +244,7 @@ export default function KomentarPage() {
           {/* ── COMMENT FEED ── */}
           {!loading && comments.length > 0 && (
             <div className="space-y-4">
-              {comments.map((comment, idx) => {
+              {comments.slice((currentPage - 1) * COMMENTS_PER_PAGE, currentPage * COMMENTS_PER_PAGE).map((comment, idx) => {
                 const [dark, light] = getAvatarPalette(comment.nama);
                 const isHadir = comment.hadir === "Hadir";
 
@@ -319,19 +291,7 @@ export default function KomentarPage() {
                           </p>
                         </div>
 
-                        {/* hadir badge */}
-                        <span
-                          className="flex-shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                          style={{
-                            background: isHadir ? "rgba(74,222,128,0.12)" : "rgba(248,113,113,0.1)",
-                            color: isHadir ? "#4ade80" : "#f87171",
-                            border: `1px solid ${isHadir ? "rgba(74,222,128,0.25)" : "rgba(248,113,113,0.2)"}`,
-                            fontSize: 11,
-                          }}
-                        >
-                          {isHadir ? `✓ Hadir${comment.pax ? ` · ${comment.pax}` : ""}` : "✗ Tdk Hadir"}
-                        </span>
-                      </div>
+                        </div>
 
                       {/* ── MESSAGE ── */}
                       <div
@@ -369,6 +329,47 @@ export default function KomentarPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* ── PAGINATION ── */}
+          {!loading && comments.length > COMMENTS_PER_PAGE && (
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <button
+                onClick={() => {
+                  setCurrentPage(p => Math.max(1, p - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={currentPage === 1}
+                className="flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 hover:bg-yellow-400/20"
+                style={{
+                  background: "rgba(255,215,0,0.1)",
+                  border: "1px solid rgba(255,215,0,0.2)",
+                  color: "#ffd700",
+                }}
+              >
+                &larr;
+              </button>
+
+              <span className="text-sm font-semibold text-white/70" style={{ fontFamily: "'Cinzel', serif" }}>
+                HAL {currentPage} / {Math.ceil(comments.length / COMMENTS_PER_PAGE)}
+              </span>
+
+              <button
+                onClick={() => {
+                  setCurrentPage(p => Math.min(Math.ceil(comments.length / COMMENTS_PER_PAGE), p + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={currentPage === Math.ceil(comments.length / COMMENTS_PER_PAGE)}
+                className="flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 hover:bg-yellow-400/20"
+                style={{
+                  background: "rgba(255,215,0,0.1)",
+                  border: "1px solid rgba(255,215,0,0.2)",
+                  color: "#ffd700",
+                }}
+              >
+                &rarr;
+              </button>
             </div>
           )}
 

@@ -585,7 +585,7 @@ function OpeningPageContent() {
       {/* TOAST NOTIFICATION */}
       {toast && (
         <div
-          className="fixed top-6 left-1/2 z-[100] -translate-x-1/2"
+          className="fixed bottom-24 left-1/2 z-[100] -translate-x-1/2"
           style={{
             animation: "toastSlide 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
             maxWidth: "calc(100vw - 40px)",
@@ -593,7 +593,7 @@ function OpeningPageContent() {
           }}
         >
           <div
-            className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+            className="relative flex items-center gap-3 rounded-2xl px-4 py-3.5 overflow-hidden"
             style={{
               background: "linear-gradient(135deg, rgba(20,40,90,0.97) 0%, rgba(10,25,60,0.98) 100%)",
               border: "1px solid rgba(255,215,0,0.25)",
@@ -630,14 +630,16 @@ function OpeningPageContent() {
               className="h-2 w-2 rounded-full"
               style={{ background: "#22c55e", boxShadow: "0 0 8px rgba(34,197,94,0.8)" }}
             />
+            
+            {/* Progress Bar */}
+            <div
+              className="absolute bottom-0 left-0 h-1"
+              style={{
+                background: "linear-gradient(to right, rgba(34,197,94,0.8), rgba(34,197,94,0.2))",
+                animation: "toastProgress 3.5s linear forwards",
+              }}
+            />
           </div>
-          <div
-            className="mx-4 h-0.5 rounded-full"
-            style={{
-              background: "linear-gradient(to right, rgba(34,197,94,0.6), rgba(34,197,94,0.1))",
-              animation: "toastProgress 3.5s linear forwards",
-            }}
-          />
         </div>
       )}
 
@@ -1388,36 +1390,9 @@ function OpeningPageContent() {
 
               {!commentsLoading && comments.length > 0 && (
                 <>
-                  {/* Ucapan Stats Row */}
-                  <div className="mb-6 grid grid-cols-3 gap-3">
-                    {[
-                      { icon: MessageCircleHeart, label: "Ucapan", value: comments.length, color: "#ffd700" },
-                      { icon: CalendarCheck, label: "Hadir", value: attending, color: "#4ade80" },
-                      { icon: Users, label: "Tdk Hadir", value: notAttending, color: "#f87171" },
-                    ].map((stat, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col items-center rounded-2xl py-4"
-                        style={{
-                          background: "linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
-                          border: "1px solid rgba(255,255,255,0.08)",
-                          backdropFilter: "blur(16px)",
-                        }}
-                      >
-                        <stat.icon size={20} style={{ color: stat.color, opacity: 0.8 }} />
-                        <span className="mt-2 font-black text-2xl" style={{ fontFamily: "'Cinzel', serif", color: stat.color }}>
-                          {stat.value}
-                        </span>
-                        <span className="mt-0.5 text-white/35 text-[10px]" style={{ letterSpacing: "0.1em" }}>
-                          {stat.label.toUpperCase()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
                   {/* Comment List */}
                   <div className="space-y-4">
-                    {comments.map((comment, idx) => {
+                    {comments.slice(0, 5).map((comment, idx) => {
                       const [dark, light] = getAvatarPalette(comment.nama);
                       const isHadirStatus = comment.hadir === "Hadir";
 
@@ -1460,17 +1435,6 @@ function OpeningPageContent() {
                                 </p>
                               </div>
 
-                              <span
-                                className="flex-shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                                style={{
-                                  background: isHadirStatus ? "rgba(74,222,128,0.12)" : "rgba(248,113,113,0.1)",
-                                  color: isHadirStatus ? "#4ade80" : "#f87171",
-                                  border: `1px solid ${isHadirStatus ? "rgba(74,222,128,0.25)" : "rgba(248,113,113,0.2)"}`,
-                                  fontSize: 11,
-                                }}
-                              >
-                                {isHadirStatus ? `✓ Hadir${comment.pax ? ` · ${comment.pax}` : ""}` : "✗ Tdk Hadir"}
-                              </span>
                             </div>
 
                             <div
@@ -1629,7 +1593,7 @@ function OpeningPageContent() {
           }
 
           @keyframes toastSlide {
-            from { opacity: 0; transform: translateX(-50%) translateY(-20px) scale(0.92); }
+            from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.92); }
             to   { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1); }
           }
 

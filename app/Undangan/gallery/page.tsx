@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ImagePlus, X, Lock, AlertCircle, Check } from "lucide-react";
 import BottomNav from "@/components/BottonNav";
 
@@ -11,21 +11,94 @@ const GALLERY_CODE =
   process.env.NEXT_PUBLIC_GALLERY_CODE ?? "wisuda32";
 
 /* ============================================================ */
-/* DATA AWAL                                                    */
+/* IMAGE COMPRESSION                                            */
 /* ============================================================ */
-const initialPhotos = [
-  "/undangan-wisuda-32/rpl3-kelas.png",
-  "/undangan-wisuda-32/rpl6-kelas.png",
-  "/undangan-wisuda-32/kel1.JPG",
-  "/undangan-wisuda-32/kel2.JPG",
-];
+async function compressImage(file: File, maxWidth = 1200): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: "image/jpeg", lastModified: Date.now() }));
+          } else {
+            reject(new Error("Canvas to Blob failed"));
+          }
+        }, "image/jpeg", 0.8);
+      };
+      img.onerror = (error) => reject(error);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 /* ============================================================ */
 /* MAIN PAGE                                                    */
 /* ============================================================ */
 export default function GalleryPage() {
-  const [photos, setPhotos] = useState<string[]>(initialPhotos);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  // fetch images
+  useEffect(() => {
+    const loadGallery = async () => {
+      const hash = typeof window !== "undefined" ? sessionStorage.getItem("invitation-hash") : null;
+      if (!hash) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const invRes = await fetch(`${API}/api/invitation/${hash}`);
+        if (invRes.ok) {
+          const invData = await invRes.json();
+          const eventId = invData?.data?.event?.id;
+          if (eventId) {
+            const msgRes = await fetch(`${API}/api/public-messages/events/${eventId}`);
+            if (msgRes.ok) {
+              const result = await msgRes.json();
+              const msgList = Array.isArray(result) ? result : (result.data || []);
+              const galleryPhotos = msgList
+                .filter((m: any) => m.imageUrl)
+                .map((m: any) => ({
+                   id: m.id,
+                   imageUrl: m.imageUrl.startsWith('http') ? m.imageUrl : `${API}${m.imageUrl}`
+                }));
+              setPhotos(galleryPhotos);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load gallery:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadGallery();
+  }, []);
 
   /* passcode modal state */
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
@@ -55,14 +128,48 @@ export default function GalleryPage() {
   };
 
   /* ── ADD PHOTO ── */
-  const handleAddPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
-    const newPhotos = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
-    setPhotos((prev) => [...prev, ...newPhotos]);
-    e.target.value = "";
+    if (!files || files.length === 0) return;
+    
+    const hash = typeof window !== "undefined" ? sessionStorage.getItem("invitation-hash") || new URLSearchParams(window.location.search).get("kode") : null;
+    if (!hash) {
+      alert("Anda harus memiliki kode undangan untuk mengunggah foto.");
+      return;
+    }
+
+    setIsUploading(true);
+    
+    try {
+      for (const file of Array.from(files)) {
+        const compressedFile = await compressImage(file);
+        
+        const formData = new FormData();
+        formData.append("image", compressedFile);
+        
+        const res = await fetch(`${API}/api/public-messages/${hash}`, {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (res.ok) {
+          const result = await res.json();
+          const newPhotoUrl = result.data?.imageUrl || result.imageUrl;
+          if (newPhotoUrl) {
+            const fullUrl = newPhotoUrl.startsWith('http') ? newPhotoUrl : `${API}${newPhotoUrl}`;
+            setPhotos((prev) => [{ id: result.data?.id || Date.now().toString(), imageUrl: fullUrl }, ...prev]);
+          }
+        } else {
+          console.error("Failed to upload image");
+        }
+      }
+    } catch (e) {
+      console.error("Error uploading photo:", e);
+      alert("Gagal mengunggah foto.");
+    } finally {
+      setIsUploading(false);
+      e.target.value = "";
+    }
   };
 
   /* ── OPEN PASSCODE MODAL ── */
@@ -166,7 +273,8 @@ export default function GalleryPage() {
             <button
               id="btn-tambah-foto"
               onClick={openPasscodeModal}
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#050f20] transition-all active:scale-95 sm:w-auto"
+              disabled={isUploading}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#050f20] transition-all active:scale-95 sm:w-auto disabled:opacity-50"
               style={{
                 fontFamily: "'Cinzel', serif",
                 letterSpacing: "0.08em",
@@ -177,8 +285,17 @@ export default function GalleryPage() {
                 fontSize: 15,
               }}
             >
-              <ImagePlus size={18} />
-              Tambah Foto
+              {isUploading ? (
+                <>
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#050f20] border-t-transparent" />
+                  Mengunggah...
+                </>
+              ) : (
+                <>
+                  <ImagePlus size={18} />
+                  Tambah Foto
+                </>
+              )}
             </button>
           </div>
 
@@ -192,49 +309,57 @@ export default function GalleryPage() {
           />
 
           {/* GALLERY GRID */}
-          <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-            {photos.map((img, i) => (
-              <div
-                key={i}
-                onClick={() => setSelectedImage(img)}
-                className="group relative cursor-pointer overflow-hidden rounded-[24px] p-[1px]"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(255,215,0,0.20), rgba(255,255,255,0.08), rgba(255,215,0,0.10))",
-                }}
-              >
-                <div
-                  className="relative overflow-hidden rounded-[24px]"
-                  style={{
-                    background:
-                      "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 60%, rgba(13,52,112,0.12) 100%)",
-                    backdropFilter: "blur(20px)",
-                  }}
-                >
-                  <img
-                    src={img}
-                    alt={`Gallery ${i + 1}`}
-                    loading={i < 4 ? "eager" : "lazy"}
-                    decoding="async"
-                    className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/25" />
+          {isLoading ? (
+            <div className="mt-20 flex justify-center">
+              <div className="h-10 w-10 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent" />
+            </div>
+          ) : (
+            <>
+              <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+                {photos.map((img, i) => (
                   <div
-                    className="absolute left-4 right-4 top-0 h-px"
+                    key={img.id || i}
+                    onClick={() => setSelectedImage(img.imageUrl || img)}
+                    className="group relative cursor-pointer overflow-hidden rounded-[24px] p-[1px]"
                     style={{
                       background:
-                        "linear-gradient(to right, transparent, rgba(255,215,0,0.4), transparent)",
+                        "linear-gradient(135deg, rgba(255,215,0,0.20), rgba(255,255,255,0.08), rgba(255,215,0,0.10))",
                     }}
-                  />
-                </div>
+                  >
+                    <div
+                      className="relative overflow-hidden rounded-[24px]"
+                      style={{
+                        background:
+                          "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 60%, rgba(13,52,112,0.12) 100%)",
+                        backdropFilter: "blur(20px)",
+                      }}
+                    >
+                      <img
+                        src={img.imageUrl || img}
+                        alt={`Gallery ${i + 1}`}
+                        loading={i < 4 ? "eager" : "lazy"}
+                        decoding="async"
+                        className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/25" />
+                      <div
+                        className="absolute left-4 right-4 top-0 h-px"
+                        style={{
+                          background:
+                            "linear-gradient(to right, transparent, rgba(255,215,0,0.4), transparent)",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {photos.length === 0 && (
-            <div className="mt-20 text-center text-white/45">
-              Belum ada foto
-            </div>
+              {photos.length === 0 && (
+                <div className="mt-20 text-center text-white/45">
+                  Belum ada foto yang diunggah
+                </div>
+              )}
+            </>
           )}
 
           {/* FOOTER */}

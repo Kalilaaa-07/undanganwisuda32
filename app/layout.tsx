@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Undangan Wisuda LUMINEX | SMK Telkom Malang Angkatan 32",
+  title: "SHINE ANGKATAN 32",
   description:
     "Undangan digital wisuda LUMINEX – SMK Telkom Malang Angkatan 32. Konfirmasi kehadiran, lihat rundown acara, dan unduh e-ticket Anda.",
   other: {

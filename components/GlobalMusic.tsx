@@ -57,7 +57,7 @@ export default function GlobalMusic() {
       hidden
     >
       <source
-        src="/music1.mp3"
+        src="/undangan-wisuda-32/music1.mp3"
         type="audio/mpeg"
       />
     </audio>
