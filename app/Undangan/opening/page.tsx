@@ -584,61 +584,63 @@ function OpeningPageContent() {
     <>
       {/* TOAST NOTIFICATION */}
       {toast && (
-        <div
-          className="fixed bottom-24 left-1/2 z-[100] -translate-x-1/2"
-          style={{
-            animation: "toastSlide 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
-            maxWidth: "calc(100vw - 40px)",
-            width: 340,
-          }}
-        >
+        <div className="fixed bottom-[110px] sm:bottom-[90px] md:bottom-24 left-0 right-0 z-[100] flex justify-center pointer-events-none">
           <div
-            className="relative flex items-center gap-3 rounded-2xl px-4 py-3.5 overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, rgba(20,40,90,0.97) 0%, rgba(10,25,60,0.98) 100%)",
-              border: "1px solid rgba(255,215,0,0.25)",
-              boxShadow: "0 0 0 1px rgba(255,215,0,0.08), 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.08)",
-              backdropFilter: "blur(20px)",
+              animation: "toastSlide 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
+              maxWidth: "calc(100vw - 32px)",
+              width: 340,
             }}
+            className="pointer-events-auto"
           >
             <div
-              className="flex h-9 w-9 min-w-[36px] items-center justify-center rounded-full"
+              className="relative flex items-center gap-3 rounded-2xl px-4 py-3.5 overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.08))",
-                border: "1px solid rgba(34,197,94,0.35)",
-                boxShadow: "0 0 12px rgba(34,197,94,0.2)",
+                background: "linear-gradient(135deg, rgba(20,40,90,0.97) 0%, rgba(10,25,60,0.98) 100%)",
+                border: "1px solid rgba(255,215,0,0.25)",
+                boxShadow: "0 0 0 1px rgba(255,215,0,0.08), 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.08)",
+                backdropFilter: "blur(20px)",
               }}
             >
-              <CheckCircle2 size={18} style={{ color: "#22c55e" }} />
-            </div>
+              <div
+                className="flex h-9 w-9 min-w-[36px] items-center justify-center rounded-full"
+                style={{
+                  background: "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.08))",
+                  border: "1px solid rgba(34,197,94,0.35)",
+                  boxShadow: "0 0 12px rgba(34,197,94,0.2)",
+                }}
+              >
+                <CheckCircle2 size={18} style={{ color: "#22c55e" }} />
+              </div>
 
-            <div className="flex-1 min-w-0">
-              <p
-                className="font-bold text-white/95"
-                style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: "0.04em" }}
-              >
-                Berhasil Disimpan
-              </p>
-              <p
-                className="mt-0.5 text-white/50"
-                style={{ fontSize: 11, fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic" }}
-              >
-                Kehadiran Anda telah dikonfirmasi
-              </p>
+              <div className="flex-1 min-w-0">
+                <p
+                  className="font-bold text-white/95"
+                  style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: "0.04em" }}
+                >
+                  Berhasil Disimpan
+                </p>
+                <p
+                  className="mt-0.5 text-white/50"
+                  style={{ fontSize: 11, fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic" }}
+                >
+                  Kehadiran Anda telah dikonfirmasi
+                </p>
+              </div>
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{ background: "#22c55e", boxShadow: "0 0 8px rgba(34,197,94,0.8)" }}
+              />
+              
+              {/* Progress Bar */}
+              <div
+                className="absolute bottom-0 left-0 h-1"
+                style={{
+                  background: "linear-gradient(to right, rgba(34,197,94,0.8), rgba(34,197,94,0.2))",
+                  animation: "toastProgress 3.5s linear forwards",
+                }}
+              />
             </div>
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{ background: "#22c55e", boxShadow: "0 0 8px rgba(34,197,94,0.8)" }}
-            />
-            
-            {/* Progress Bar */}
-            <div
-              className="absolute bottom-0 left-0 h-1"
-              style={{
-                background: "linear-gradient(to right, rgba(34,197,94,0.8), rgba(34,197,94,0.2))",
-                animation: "toastProgress 3.5s linear forwards",
-              }}
-            />
           </div>
         </div>
       )}
@@ -1593,8 +1595,8 @@ function OpeningPageContent() {
           }
 
           @keyframes toastSlide {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.92); }
-            to   { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1); }
+            from { opacity: 0; transform: translateY(20px) scale(0.92); }
+            to   { opacity: 1; transform: translateY(0)     scale(1); }
           }
 
           @keyframes toastProgress {
