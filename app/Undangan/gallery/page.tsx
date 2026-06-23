@@ -60,6 +60,7 @@ export default function GalleryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [photoLimitReached, setPhotoLimitReached] = useState(false);
   
   // fetch images
   useEffect(() => {
@@ -160,7 +161,15 @@ export default function GalleryPage() {
             setPhotos((prev) => [{ id: result.data?.id || Date.now().toString(), imageUrl: fullUrl }, ...prev]);
           }
         } else {
-          console.error("Failed to upload image");
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData?.message || "Failed to upload image";
+          if (res.status === 400 || errMsg.toLowerCase().includes("limit") || errMsg.toLowerCase().includes("reached") || errMsg.toLowerCase().includes("maximum")) {
+            setPhotoLimitReached(true);
+            alert("Maaf, Anda telah mencapai batas maksimal upload foto.");
+            break; // stop uploading more files immediately
+          } else {
+            alert("Gagal mengunggah foto: " + errMsg);
+          }
         }
       }
     } catch (e) {
@@ -270,38 +279,58 @@ export default function GalleryPage() {
 
           {/* BUTTONS */}
           <div className="mx-auto mb-14 mt-2 flex w-full max-w-sm flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <button
-              id="btn-tambah-foto"
-              onClick={openPasscodeModal}
-              disabled={isUploading}
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#050f20] transition-all active:scale-95 sm:w-auto disabled:opacity-50"
-              style={{
-                fontFamily: "'Cinzel', serif",
-                letterSpacing: "0.08em",
-                background: "linear-gradient(135deg, #ffd700 0%, #f0c000 100%)",
-                boxShadow:
-                  "0 0 0 1px rgba(255,215,0,0.3), 0 8px 20px rgba(255,215,0,0.2)",
-                minHeight: 52,
-                fontSize: 15,
-              }}
-            >
-              {isUploading ? (
-                <>
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#050f20] border-t-transparent" />
-                  Mengunggah...
-                </>
-              ) : (
-                <>
-                  <ImagePlus size={18} />
-                  Tambah Foto
-                </>
-              )}
-            </button>
+            {photoLimitReached ? (
+              <div
+                className="inline-flex w-full flex-col items-center justify-center gap-1 rounded-full px-7 py-3.5 sm:w-auto"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,215,0,0.15)",
+                  minHeight: 52,
+                }}
+              >
+                <span
+                  className="text-yellow-300/70"
+                  style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: "0.08em" }}
+                >
+                  Batas Upload Tercapai
+                </span>
+                <span className="text-white/35" style={{ fontSize: 11 }}>
+                  Anda sudah mengunggah foto maksimal
+                </span>
+              </div>
+            ) : (
+              <button
+                id="btn-tambah-foto"
+                onClick={openPasscodeModal}
+                disabled={isUploading}
+                className="inline-flex w-full items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#050f20] transition-all active:scale-95 sm:w-auto disabled:opacity-50"
+                style={{
+                  fontFamily: "'Cinzel', serif",
+                  letterSpacing: "0.08em",
+                  background: "linear-gradient(135deg, #ffd700 0%, #f0c000 100%)",
+                  boxShadow:
+                    "0 0 0 1px rgba(255,215,0,0.3), 0 8px 20px rgba(255,215,0,0.2)",
+                  minHeight: 52,
+                  fontSize: 15,
+                }}
+              >
+                {isUploading ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#050f20] border-t-transparent" />
+                    Mengunggah...
+                  </>
+                ) : (
+                  <>
+                    <ImagePlus size={18} />
+                    Tambah Foto
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           <input
             type="file"
-            multiple
             accept="image/*"
             ref={fileInputRef}
             onChange={handleAddPhoto}
